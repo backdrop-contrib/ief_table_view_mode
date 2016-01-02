@@ -194,6 +194,12 @@ function ief_table_view_mode_form_field_ui_field_edit_form_alter(&$form, &$form_
     '#theme' => 'item_list',
     '#items' => $bundle_admin_link,
   );
+
+  $ief_settings['type_settings']['ief_table_view_mode']['note'] = array(
+    '#prefix' => '<em>',
+    '#suffix' => '</em>',
+    '#markup' => t('Note: If all bundles have activated the view mode. The latest bundle will define the order of fields.'),
+  );
 }
 
 
