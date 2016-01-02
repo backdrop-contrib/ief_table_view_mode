@@ -148,6 +148,56 @@ function ief_table_view_mode_form_field_ui_display_overview_form_alter(&$form, &
 
 
 /**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function ief_table_view_mode_form_field_ui_field_edit_form_alter(&$form, &$form_state) {
+  if ($form['#instance']['widget']['type'] != 'inline_entity_form') {
+
+    return;
+  }
+  $entity_type = $form['#field']['settings']['target_type'];
+  $entity_info = entity_get_info($entity_type);
+
+  if (!$entity_info['fieldable']) {
+
+    return;
+  }
+  $ief_settings = &$form['instance']['widget']['settings'];
+
+  $ief_settings['type_settings']['ief_table_view_mode'] = array(
+    '#type' => 'container',
+  );
+
+  $message = t('It is posible to add fields to the table widget, activating the view mode %name_view_name. You can activate and setup the view mode in the following bundles:', array(
+    '%name_view_name' => t('Inline Entity Form Table'),
+  ));
+  $ief_settings['type_settings']['ief_table_view_mode']['info'] = array(
+    '#markup' => $message,
+  );
+
+  $options_link = array(
+    'attributes' => array(
+      'target' => '_blank',
+    ),
+  );
+  $bundle_admin_link = array();
+  foreach ($entity_info['bundles'] as $bundle => $bundle_info) {
+    $view_mode = field_view_mode_settings($entity_type, $bundle);
+    $path = $bundle_info['admin']['path'] . '/display';
+    if (isset($view_mode[IEF_TABLE_VIEW_MODE_NAME]) && $view_mode[IEF_TABLE_VIEW_MODE_NAME]['custom_settings']) {
+      $path .= '/' . IEF_TABLE_VIEW_MODE_NAME;
+    }
+    $bundle_admin_link[] = l($bundle_info['label'], $path, $options_link);
+  }
+
+  $ief_settings['type_settings']['ief_table_view_mode']['bundles'] = array(
+    '#theme' => 'item_list',
+    '#items' => $bundle_admin_link,
+  );
+}
+
+
+/**
  * Add a new extra field in the table of the UI.
  *
  * @param array $element
