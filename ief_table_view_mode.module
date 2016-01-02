@@ -184,10 +184,12 @@ function ief_table_view_mode_form_field_ui_field_edit_form_alter(&$form, &$form_
   foreach ($entity_info['bundles'] as $bundle => $bundle_info) {
     $view_mode = field_view_mode_settings($entity_type, $bundle);
     $path = $bundle_info['admin']['path'] . '/display';
+    $info = '';
     if (isset($view_mode[IEF_TABLE_VIEW_MODE_NAME]) && $view_mode[IEF_TABLE_VIEW_MODE_NAME]['custom_settings']) {
       $path .= '/' . IEF_TABLE_VIEW_MODE_NAME;
+      $info .= ' <em>' . t('Activated') . '</em>';
     }
-    $bundle_admin_link[] = l($bundle_info['label'], $path, $options_link);
+    $bundle_admin_link[] = l($bundle_info['label'], $path, $options_link) . $info;
   }
 
   $ief_settings['type_settings']['ief_table_view_mode']['bundles'] = array(
