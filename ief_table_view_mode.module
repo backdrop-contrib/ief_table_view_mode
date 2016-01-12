@@ -123,7 +123,7 @@ function ief_table_view_mode_form_field_ui_display_overview_form_alter(&$form, &
 
   if (isset($entity_info['inline entity form']) && isset($entity_info['inline entity form']['controller'])) {
     $controller = new $entity_info['inline entity form']['controller']($entity_type, array());
-    $table_fields = $controller->tableFields($bundle);
+    $table_fields = $controller->tableFields(array($bundle));
     foreach ($table_fields as $name => $table_field) {
       if ($table_field['type'] == 'property' && !in_array($name, $form['#extra'])) {
         $found_ief_fields = TRUE;
@@ -155,7 +155,14 @@ function ief_table_view_mode_form_field_ui_field_edit_form_alter(&$form, &$form_
 
     return;
   }
-  $entity_type = $form['#field']['settings']['target_type'];
+  if ($form['#field']['type'] == 'commerce_product_reference') {
+    $entity_type = 'commerce_product';
+  }
+  // @TODO: Maybe exists other type of fields that used widget inline entity form.
+  else {
+    $entity_type = $form['#field']['settings']['target_type'];
+  }
+
   $entity_info = entity_get_info($entity_type);
 
   if (!$entity_info['fieldable']) {
