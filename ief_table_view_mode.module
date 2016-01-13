@@ -44,17 +44,17 @@ function ief_table_view_mode_inline_entity_form_table_fields_alter(&$fields, $co
 
       $settings = field_bundle_settings($entity_type, $bundle);
       // Default settings maybe has not registered any extra field.
-      foreach ($old_fields as $name => $field) {
+      foreach ($old_fields as $old_field_name => $old_field) {
         // If this field is a property and this not exists in the settings
-        if ($field['type'] == 'property' && !isset($settings['extra_fields']['display'][$name])) {
-          $settings['extra_fields']['display'][$name][IEF_TABLE_VIEW_MODE_NAME] = array(
-            'weight' => $field['weight'],
+        if ($old_field['type'] == 'property' && !isset($settings['extra_fields']['display'][$old_field_name])) {
+          $settings['extra_fields']['display'][$old_field_name][IEF_TABLE_VIEW_MODE_NAME] = array(
+            'weight' => $old_field['weight'],
             'visible' => TRUE,
           );
         }
-        // If there is already a field, it adds.
-        if ($field['type'] == 'field') {
-          $fields[$name] = $field;
+        // An old field is added if it is not added in $fields variable.
+        if ($old_field['type'] == 'field' && !isset($fields[$old_field_name])) {
+          $fields[$old_field_name] = $old_field;
         }
       }
       $old_fields = array();
