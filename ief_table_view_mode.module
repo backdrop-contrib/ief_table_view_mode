@@ -18,7 +18,6 @@ function ief_table_view_mode_inline_entity_form_table_fields_alter(&$fields, $co
   $original_fields = $fields;
   $old_fields = array();
   $change_apply = FALSE;
-
   foreach ($context['allowed_bundles'] as $bundle) {
     $view_mode = field_view_mode_settings($entity_type, $bundle);
     if (isset($view_mode[IEF_TABLE_VIEW_MODE_NAME]) && $view_mode[IEF_TABLE_VIEW_MODE_NAME]['custom_settings']) {
@@ -28,11 +27,12 @@ function ief_table_view_mode_inline_entity_form_table_fields_alter(&$fields, $co
 
       // Checking fields instances.
       $fields_instance = field_info_instances($entity_type, $bundle);
+      $fields_hidden = array();
       foreach ($fields_instance as $field_name => $field_instance) {
         if ($field_instance['display'][IEF_TABLE_VIEW_MODE_NAME]['type'] == 'hidden') {
+          $fields_hidden[$field_name] = $field_name;
           continue;
         }
-
         $fields[$field_name] = array(
           'type' => 'field',
           'label' => $field_instance['label'],
@@ -53,7 +53,7 @@ function ief_table_view_mode_inline_entity_form_table_fields_alter(&$fields, $co
           );
         }
         // An old field is added if it is not added in $fields variable.
-        if ($old_field['type'] == 'field' && !isset($fields[$old_field_name])) {
+        if ($old_field['type'] == 'field' && !isset($fields_hidden[$old_field_name]) && !isset($fields[$old_field_name])) {
           $fields[$old_field_name] = $old_field;
         }
       }
