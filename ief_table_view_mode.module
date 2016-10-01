@@ -33,9 +33,10 @@ function ief_table_view_mode_inline_entity_form_table_fields_alter(&$fields, $co
           $fields_hidden[$field_name] = $field_name;
           continue;
         }
+        $field_label = module_exists('i18n_field') ? i18n_field_translate_property($field_instance, 'label') : t($field_instance['label']);
         $fields[$field_name] = array(
           'type' => 'field',
-          'label' => $field_instance['label'],
+          'label' => $field_label,
           'formatter' => $field_instance['display'][IEF_TABLE_VIEW_MODE_NAME]['type'],
           'settings' => $field_instance['display'][IEF_TABLE_VIEW_MODE_NAME]['settings'],
           'weight' => $field_instance['display'][IEF_TABLE_VIEW_MODE_NAME]['weight'],
@@ -67,7 +68,7 @@ function ief_table_view_mode_inline_entity_form_table_fields_alter(&$fields, $co
 
         $fields[$name] = array(
           'type' => 'property',
-          'label' => $original_fields[$name]['label'],
+          'label' => t($original_fields[$name]['label']),
           'weight' => $extra_field[IEF_TABLE_VIEW_MODE_NAME]['weight'],
         );
       }
