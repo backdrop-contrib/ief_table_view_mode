@@ -62,7 +62,7 @@ function ief_table_view_mode_inline_entity_form_table_fields_alter(&$fields, $co
 
       // Properties are added as configured from the UI.
       foreach ($settings['extra_fields']['display'] as $name => $extra_field) {
-        if (!$extra_field[IEF_TABLE_VIEW_MODE_NAME]['visible'] || !isset($original_fields[$name])) {
+        if ((isset($extra_field[IEF_TABLE_VIEW_MODE_NAME]['visible']) && !$extra_field[IEF_TABLE_VIEW_MODE_NAME]['visible']) || !isset($original_fields[$name])) {
           continue;
         }
 
