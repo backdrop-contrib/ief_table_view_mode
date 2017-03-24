@@ -18,7 +18,22 @@ function ief_table_view_mode_inline_entity_form_table_fields_alter(&$fields, $co
   $original_fields = $fields;
   $old_fields = array();
   $change_apply = FALSE;
+  // Get the instance of the field.
+  $instance = field_info_instance($context['parent_entity_type'], $context['field_name'], $context['parent_bundle']);
+  $allowed_bundles = isset($instance['widget']['settings']['type_settings']['ief_table_view_mode']['bundles']) ?
+          $instance['widget']['settings']['type_settings']['ief_table_view_mode']['bundles'] : array();
+  $filter_bundle = FALSE;
+  if (!empty($allowed_bundles)) {
+    $allowed_bundles_count_values = array_count_values($allowed_bundles);
+    if (count($allowed_bundles_count_values) != 1) {
+      $filter_bundle = TRUE;
+    }
+  }
+
   foreach ($context['allowed_bundles'] as $bundle) {
+    if ($filter_bundle && isset($allowed_bundles[$bundle]) && !$allowed_bundles[$bundle]) {
+      continue;
+    }
     $view_mode = field_view_mode_settings($entity_type, $bundle);
     if (isset($view_mode[IEF_TABLE_VIEW_MODE_NAME]) && $view_mode[IEF_TABLE_VIEW_MODE_NAME]['custom_settings']) {
       $change_apply = TRUE;
@@ -172,15 +187,14 @@ function ief_table_view_mode_form_field_ui_field_edit_form_alter(&$form, &$form_
   }
   $ief_settings = &$form['instance']['widget']['settings'];
 
-  $ief_settings['type_settings']['ief_table_view_mode'] = array(
-    '#type' => 'container',
-  );
-
-  $message = t('It is posible to add fields to the table widget, activating the view mode %name_view_name. You can activate and setup the view mode in the following bundles:', array(
+  $widget = $form['#instance']['widget'];
+  $message = t('Define which fields you want to display by configuring the view mode %name_view_name in the following bundles:', array(
     '%name_view_name' => t('Inline Entity Form Table'),
   ));
-  $ief_settings['type_settings']['ief_table_view_mode']['info'] = array(
-    '#markup' => $message,
+  $ief_settings['type_settings']['ief_table_view_mode'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Inline Entity Form Table View Mode'),
+    '#description' => $message,
   );
 
   $options_link = array(
@@ -189,26 +203,38 @@ function ief_table_view_mode_form_field_ui_field_edit_form_alter(&$form, &$form_
     ),
   );
   $bundle_admin_link = array();
+  $bundles = array();
   foreach ($entity_info['bundles'] as $bundle => $bundle_info) {
     $view_mode = field_view_mode_settings($entity_type, $bundle);
     $path = $bundle_info['admin']['path'] . '/display';
     $info = '';
+    $disabled = TRUE;
     if (isset($view_mode[IEF_TABLE_VIEW_MODE_NAME]) && $view_mode[IEF_TABLE_VIEW_MODE_NAME]['custom_settings']) {
       $path .= '/' . IEF_TABLE_VIEW_MODE_NAME;
-      $info .= ' <em>' . t('Activated') . '</em>';
+      $description = t('This <a href="!path" target="_blank">bundle</a> has the view mode activated.', array('!path' => url($path)));
+      $disabled = FALSE;
     }
-    $bundle_admin_link[] = l($bundle_info['label'], $path, $options_link) . $info;
+    else {
+      $description = t('This <a href="!path" target="_blank">bundle</a> does <strong>not have</strong> activated the view mode.', array('!path' => url($path)));
+    }
+
+    $bundles[$bundle] = array(
+      '#type' => 'checkbox',
+      '#title' => $bundle_info['label'],
+      '#disabled' => $disabled,
+      '#default_value' => !$disabled && isset($widget['settings']['type_settings']['ief_table_view_mode']['bundles'][$bundle]) ? $widget['settings']['type_settings']['ief_table_view_mode']['bundles'][$bundle] : 0,
+      '#description' => $description,
+    );
   }
 
   $ief_settings['type_settings']['ief_table_view_mode']['bundles'] = array(
-    '#theme' => 'item_list',
-    '#items' => $bundle_admin_link,
-  );
+    '#type' => 'container',
+  ) + $bundles;
 
   $ief_settings['type_settings']['ief_table_view_mode']['note'] = array(
     '#prefix' => '<em>',
     '#suffix' => '</em>',
-    '#markup' => t('Note: If all bundles have activated the view mode. The latest bundle will define the order of fields.'),
+    '#markup' => t('Select the bundle(s) to limit the fields you want to add. If you do not select any bundle(s), all displayed fields from activated bundles will appear in the widget. The latest bundle will define the order of fields.'),
   );
 }
 
