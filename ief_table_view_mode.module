@@ -61,7 +61,7 @@ function ief_table_view_mode_inline_entity_form_table_fields_alter(&$fields, $co
       $settings = field_bundle_settings($entity_type, $bundle);
       // Default settings maybe has not registered any extra field.
       foreach ($old_fields as $old_field_name => $old_field) {
-        // If this field is a property and this not exists in the settings
+        // If this field is a property and this not exists in the settings.
         if ($old_field['type'] == 'property' && !isset($settings['extra_fields']['display'][$old_field_name])) {
           $settings['extra_fields']['display'][$old_field_name][IEF_TABLE_VIEW_MODE_NAME] = array(
             'weight' => $old_field['weight'],
@@ -95,7 +95,6 @@ function ief_table_view_mode_inline_entity_form_table_fields_alter(&$fields, $co
   }
 }
 
-
 /**
  * Implements hook_entity_info_alter().
  */
@@ -107,7 +106,6 @@ function ief_table_view_mode_entity_info_alter(&$info) {
     );
   }
 }
-
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -147,7 +145,7 @@ function ief_table_view_mode_form_field_ui_display_overview_form_alter(&$form, &
 
         $display = isset($extra_fields[$name]) ? $extra_fields[$name][IEF_TABLE_VIEW_MODE_NAME] : array(
           'weight' => $table_field['weight'],
-          'visible' => 'visible'
+          'visible' => 'visible',
         );
 
         _ief_table_view_mode_add_extra_field($form['fields'], $name, $table_field, $display);
@@ -161,7 +159,6 @@ function ief_table_view_mode_form_field_ui_display_overview_form_alter(&$form, &
     );
   }
 }
-
 
 /**
  * Implements hook_form_FORM_ID_alter().
@@ -238,20 +235,19 @@ function ief_table_view_mode_form_field_ui_field_edit_form_alter(&$form, &$form_
   );
 }
 
-
 /**
  * Add a new extra field in the table of the UI.
  *
  * @param array $element
- *  The element with all fields.
+ *   The element with all fields.
  * @param string $name
- *  The machine name of the extra field.
+ *   The machine name of the extra field.
  * @param array $table_field
- *  The definition of the field from ief.
+ *   The definition of the field from ief.
  * @param array $display
- *  The view setting of the field.
+ *   The view setting of the field.
  */
-function _ief_table_view_mode_add_extra_field(&$element, $name, $table_field, $display) {
+function _ief_table_view_mode_add_extra_field(array &$element, $name, array $table_field, array $display) {
   $element[$name] = array(
     '#attributes' => array('class' => array('draggable', 'tabledrag-leaf')),
     '#row_type' => 'extra_field',
