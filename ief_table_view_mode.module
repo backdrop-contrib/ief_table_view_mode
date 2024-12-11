@@ -91,7 +91,7 @@ function ief_table_view_mode_inline_entity_form_table_fields_alter(&$fields, $co
   }
 
   if ($change_apply) {
-    drupal_alter('ief_table_view_mode_fields', $fields, $original_fields, $context);
+    backdrop_alter('ief_table_view_mode_fields', $fields, $original_fields, $context);
   }
 }
 
@@ -171,7 +171,7 @@ function ief_table_view_mode_form_field_ui_field_edit_form_alter(&$form, &$form_
   if ($form['#field']['type'] == 'commerce_product_reference') {
     $entity_type = 'commerce_product';
   }
-  // @TODO: Maybe exists other type of fields that used widget inline entity form.
+  // @TODO: Maybe other field types use the inline entity form widget.
   else {
     $entity_type = $form['#field']['settings']['target_type'];
   }
@@ -194,12 +194,6 @@ function ief_table_view_mode_form_field_ui_field_edit_form_alter(&$form, &$form_
     '#description' => $message,
   );
 
-  $options_link = array(
-    'attributes' => array(
-      'target' => '_blank',
-    ),
-  );
-  $bundle_admin_link = array();
   $bundles = array();
   foreach ($entity_info['bundles'] as $bundle => $bundle_info) {
     $view_mode = field_view_mode_settings($entity_type, $bundle);

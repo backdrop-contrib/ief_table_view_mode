@@ -1,5 +1,6 @@
 name = IEF Table View Mode
-description = "Defines a view mode to set up the columns of the table for the Inline Entity Form widget.
+description = "Defines a view mode to set up the columns of the table for the Inline Entity Form widget."
 package = Fields
 dependencies[] = inline_entity_form
-core = 7.x
+backdrop = 1.x
+type = module
