@@ -197,7 +197,7 @@ function ief_table_view_mode_form_field_ui_field_edit_form_alter(&$form, &$form_
   $bundles = array();
   foreach ($entity_info['bundles'] as $bundle => $bundle_info) {
     $view_mode = field_view_mode_settings($entity_type, $bundle);
-    $path = $bundle_info['admin']['path'] . '/display';
+    $path = $bundle_info['admin']['real path'] . '/display';
     $info = '';
     $disabled = TRUE;
     if (isset($view_mode[IEF_TABLE_VIEW_MODE_NAME]) && $view_mode[IEF_TABLE_VIEW_MODE_NAME]['custom_settings']) {
